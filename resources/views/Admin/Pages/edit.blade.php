@@ -42,8 +42,10 @@
                     <div class="form-group">
                         <h4><span class="badge badge-secondary">Photos</span></h4>
                         @foreach ($photos as $photo)
+                        {{-- ad ogni giro la foto è già presente nella collection di foto collegata alla pagina? --}}
                             <label for="photos-{{$photo->id}}">{{$photo->name}}</label>
-                            <input type="checkbox" name="photos[]" id="photos-{{$photo->id}}" value="{{$photo->id}}">
+                            <input type="checkbox" name="photos[]" id="photos-{{$photo->id}}" value="{{$photo->id}}" 
+                            {{(!empty(old('photos.'. $key)) ||  $page->photos->contains($photo->id)) ? 'checked' : ''}}>
                         @endforeach
                     </div>
                     <div class="col-4 offset-4">
