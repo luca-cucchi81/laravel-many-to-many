@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Support\Str;
 use App\User;
 use App\Page;
 use App\Category;
@@ -65,7 +66,21 @@ class PageController extends Controller
             ->withErrors($validator)
             ->withInput();
         }
-        dd('ok');
+        
+        $page = new Page;
+        $data['slug'] = Str::slug($data['title'] , '-');
+        $data['user_id'] = Auth::id();
+        $page->fill($data);
+        $saved =$page->save();
+
+        if(!$saved){
+            dd('error');
+        }
+
+        $page->tags()->attach($data['tags']);
+        $page->photos()->attach($data['photos']);
+        
+        return redirect()->route('admin.pages.show', $page->id);
     }
 
     /**
@@ -76,7 +91,9 @@ class PageController extends Controller
      */
     public function show($id)
     {
-        //
+        $page = Page::findOrFail($id);
+
+        return view('admin.pages.show', compact('page'));
     }
 
     /**
