@@ -20,6 +20,12 @@
                     </ul>
                 </div>
                 @endif
+
+                @if($page->photos->count() > 0)
+                    @foreach ($page->photos as $photo)
+                        <img class="img-fluid" src="{{asset('storage/'. $photo->path)}}" alt="{{$photo->name}}">
+                    @endforeach
+                @endif
             </div>
         </div>
     </div>

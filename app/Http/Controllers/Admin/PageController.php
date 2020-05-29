@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
+use Illuminate\Support\Facades\Storage;
 use App\User;
 use App\Page;
 use App\Category;
@@ -50,6 +51,7 @@ class PageController extends Controller
     public function store(Request $request)
     {
         $data = $request->all();
+
         //Validazione
         $validator = Validator::make($data, [
             'title' => 'required|max:200',
@@ -57,8 +59,8 @@ class PageController extends Controller
             'category_id' => 'required|exists:categories,id',
             'tags' => 'required|array',
             'tags.*' => 'exists:tags,id',
-            'photos' => 'required|array',
-            'photos.*' => 'exists:photos,id'
+            /* 'photos' => 'required|array', */
+            /* 'photos.*' => 'exists:photos,id' */
         ]);
 
         if ($validator->fails()) {
@@ -66,6 +68,18 @@ class PageController extends Controller
             ->withErrors($validator)
             ->withInput();
         }
+
+        if (isset($data['photo'])) {
+            $path = Storage::disk('public')->put('images', $data['photo']);
+            $photo = new Photo;
+            $photo->user_id = Auth::id();
+            $photo->name = $data['title'];
+            $photo->path = $path;
+            $photo->description = 'Lorem ipsum';
+            $photo->save();
+        }
+
+       
         
         $page = new Page;
         $data['slug'] = Str::slug($data['title'] , '-');
@@ -78,7 +92,11 @@ class PageController extends Controller
         }
 
         $page->tags()->attach($data['tags']);
-        $page->photos()->attach($data['photos']);
+
+         if(!empty($photo)) {
+            $page->photos()->attach($photo);
+        }
+
         
         return redirect()->route('admin.pages.show', $page->id);
     }
