@@ -148,6 +148,35 @@ class PageController extends Controller
             abort('404');
         }
 
+        //se abbiamo un nuovo file
+        if (isset($data['photo-file'])) {
+            //prendo tutte le foto collegate a questa pagina
+            $photosThisPage = $page->photos;
+            // ciclo sulle foto
+            foreach($photosThisPage as $photo) {
+                // cancello il file dalla cartella
+                $deleted = Storage::disk('public')->delete($photo->path);
+                //cancello la relazione dal db ovvero cancello record da tabella ponte
+                $page->photos()->detach($photo->id);
+                //cerco il record nella tabella photos
+                $photoDb = Photo::find($photo->id);
+                //cancello il record da photos
+                $photoDb->delete();
+            }
+        
+            //carico nuova foto in storage
+            $path = Storage::disk('public')->put('images', $data['photo-file']);
+            // creo nuovo record in db
+            $photo = new Photo;
+            $photo->user_id = Auth::id();
+            $photo->name = $data['title'];
+            $photo->path = $path;
+            $photo->description = 'Lorem ipsum';
+            $saved = $photo->save();
+            //salvo relazione in tabella ponte
+            $page->photos()->attach($photo->id);
+        }
+
         $page->fill($data);
         $updated = $page->update();
         if (!$updated) {
@@ -155,7 +184,7 @@ class PageController extends Controller
         }
 
         $page->tags()->sync($data['tags']);
-        $page->photos()->sync($data['photos']);
+        
 
         return redirect()->route('admin.pages.show', $page->id);
     }

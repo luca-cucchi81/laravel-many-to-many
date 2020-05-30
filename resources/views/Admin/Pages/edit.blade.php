@@ -6,7 +6,7 @@
                 @foreach ($errors->all() as $message)
                     {{$message}}
                 @endforeach
-                <form action="{{route('admin.pages.update', $page->id)}}" method="post">
+                <form action="{{route('admin.pages.update', $page->id)}}" method="post" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     <div class="form-group">
@@ -36,17 +36,23 @@
                         {{-- ad ogni giro il tag è già presente nella collection di tags collegata alla pagina? --}}
                             <label for="tags-{{$tag->id}}">{{$tag->name}}</label>
                             <input type="checkbox" name="tags[]" id="tags-{{$tag->id}}" value="{{$tag->id}}" 
-                            {{(!empty(old('tags.'. $key)) ||  $page->tags->contains($tag->id)) ? 'checked' : ''}}>
+                            {{((is_array(old('tags')) && in_array($tag->id, old('tags'))) ||  $page->tags->contains($tag->id)) ? 'checked' : ''}}>
                         @endforeach
                     </div>
                     <div class="form-group">
                         <h4><span class="badge badge-secondary">Photos</span></h4>
-                        @foreach ($photos as $photo)
+                      {{--   @foreach ($photos as $photo) --}}
                         {{-- ad ogni giro la foto è già presente nella collection di foto collegata alla pagina? --}}
-                            <label for="photos-{{$photo->id}}">{{$photo->name}}</label>
+                           {{--  <label for="photos-{{$photo->id}}">{{$photo->name}}</label>
+                            <img class="card-img-top" style="width: 30%;" src="{{asset('storage/'. $photo->path)}}" alt="{{$photo->name}}">
                             <input type="checkbox" name="photos[]" id="photos-{{$photo->id}}" value="{{$photo->id}}" 
-                            {{(!empty(old('photos.'. $key)) ||  $page->photos->contains($photo->id)) ? 'checked' : ''}}>
+                            {{((is_array(old('photos')) && in_array($photo->id, old('photos'))) ||  $page->photos->contains($photo->id)) ? 'checked' : ''}}>
+                        @endforeach --}}
+                        @foreach ($page->photos as $photo)
+                           <img class="card-img-top" style="width: 30%;" src="{{asset('storage/'. $photo->path)}}" alt="{{$photo->name}}"> 
                         @endforeach
+                        <input type="file" name="photo-file">
+                        <input type="submit" value="SAVE" class="btn btn-primary">
                     </div>
                     <div class="col-4 offset-4">
                         <input type="submit" value="SAVE" class="btn btn-primary" style="width: 100%;">
