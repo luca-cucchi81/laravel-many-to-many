@@ -3,6 +3,7 @@
     <div class="container">
         <div class="row">
             <div class="col-12">
+                <a class="btn btn-success" style="margin-bottom: 20px;" role="button" href="{{route('admin.pages.index')}}">BACK</a>
                 <h2>{{$page->title}}</h2>
                 <h3>Category: {{$page->category->name}}</h3>
                 <small>Created by: {{$page->user->name}}</small>

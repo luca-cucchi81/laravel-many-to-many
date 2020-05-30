@@ -6,19 +6,20 @@
                 @foreach ($errors->all() as $message)
                     {{$message}}
                 @endforeach
+                <a class="btn btn-success" style="margin-bottom: 20px;" role="button" href="{{route('admin.pages.index')}}">BACK</a>
                 <form action="{{route('admin.pages.update', $page->id)}}" method="post" enctype="multipart/form-data">
                     @csrf
                     @method('PATCH')
                     <div class="form-group">
-                        <label for="title">Title</label>
+                        <label for="title" class="font-weight-bold">Title</label>
                         <input type="text" class="form-control" name="title" id="title" value="{{old('title') ?? $page->title}}">
                     </div>
                     <div class="form-group">
-                        <label for="summary">Summary</label>
+                        <label for="summary" class="font-weight-bold">Summary</label>
                         <input type="text" class="form-control" name="summary" id="summary" value="{{old('summary') ?? $page->summary}}">
                     </div>
                     <div class="form-group">
-                        <label for="body">Body</label>
+                        <label for="body" class="font-weight-bold">Body</label>
                         <textarea name="body" id="body" class="form-control" cols="50" rows="10">{{old('body') ?? $page->body}}</textarea>
                     </div>
                     <div class="form-group">
