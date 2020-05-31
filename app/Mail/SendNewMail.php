@@ -6,6 +6,7 @@ use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Mail\Mailable;
 use Illuminate\Queue\SerializesModels;
+use App\Page;
 
 class SendNewMail extends Mailable
 {
@@ -16,9 +17,9 @@ class SendNewMail extends Mailable
      *
      * @return void
      */
-    public function __construct()
+    public function __construct(Page $page)
     {
-        //
+        $this->page = $page;
     }
 
     /**
@@ -28,6 +29,7 @@ class SendNewMail extends Mailable
      */
     public function build()
     {
-        return $this->view('view.name');
+        $page = $this->page;
+        return $this->view('mail.mail', compact('page'));
     }
 }

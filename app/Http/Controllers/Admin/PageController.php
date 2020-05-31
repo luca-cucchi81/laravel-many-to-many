@@ -8,6 +8,8 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Storage;
+use App\Mail\SendNewMail;
+use Illuminate\Support\Facades\Mail;
 use App\User;
 use App\Page;
 use App\Category;
@@ -97,7 +99,7 @@ class PageController extends Controller
             $page->photos()->attach($photo);
         }
 
-        
+        Mail::to('mail@mail.it')->send(new SendNewMail($page));
         return redirect()->route('admin.pages.show', $page->id);
     }
 
